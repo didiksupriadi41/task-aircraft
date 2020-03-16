@@ -19,6 +19,11 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
+
+// globals
+
+GLuint object;
 
 static int slices = 1;
 static int slices2 = 1;
@@ -202,142 +207,179 @@ void fan(){
 
 }
 
+void loadObj(char *fname)
+{
+  FILE *fp;
+  int read;
+  GLfloat x, y, z;
+  char ch;
+  object=glGenLists(1);
+  fp=fopen(fname,"r");
+  if (!fp) {
+    printf("can't open file %s\n", fname);
+    exit(1);
+  }
+  glPointSize(2.0);
+  glNewList(object, GL_COMPILE);
+  {
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    while(!(feof(fp))) {
+      read=fscanf(fp,"%c %f %f %f",&ch,&x,&y,&z);
+      if(read==4&&ch=='v') {
+        glVertex3f(x,y,z);
+      }
+      if(read==4&&ch=='n') {
+        glNormal3f(x,y,z);
+      }
+    }
+    glEnd();
+  }
+  glPopMatrix();
+  glEndList();
+  fclose(fp);
+}
+
 
 void plane() {
-    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    double a = t*90.0;
 
-    /// Main body
-    glColor3d(0.5,1,0);
-    glPushMatrix();
-        glTranslated(0,0,0);
-        glScaled(3,0.4,0.5);
-        glutWireSphere(1,30,30);
-    glPopMatrix();
+    glColor3f(1.0,0.23,0.27);
+    glCallList(object);
+  
+    /* const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0; */
+    /* double a = t*90.0; */
 
-    glColor3d(0,0,0);
-    glPushMatrix();
-        glTranslated(1.7,0.1,0);
-        glScaled(1.5,0.7,0.8);
-        glRotated(40,0,1,0);
-        glutWireSphere(0.45,30,30);
-    glPopMatrix();
+    /* /// Main body */
+    /* glColor3d(0.5,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(0,0,0); */
+    /*     glScaled(3,0.4,0.5); */
+    /*     glutWireSphere(1,30,30); */
+    /* glPopMatrix(); */
 
-
-    ///Right
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(0,0,1.2);
-        glRotated(-50,0,1,0);
-        glScaled(0.7,0.1,3);
-        glRotated(25,0,1,0);
-        glutWireCube(1);
-    glPopMatrix();
-
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(-0.3,-0.15,1.5);
-        glRotated(90,0,1,0);
-        glScaled(0.1,0.1,0.9);
-        glutWireTorus(0.5,0.5,50,50);
-    glPopMatrix();
-
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(0.2,-0.15,0.9);
-        glRotated(90,0,1,0);
-
-//        /// FAN
-//        glPushMatrix();
-//            glTranslated(0,0,0.5);
-//            //glRotated(10*a,0,0,1);
-//            glScaled(0.1,0.1,0.1);
-//            fan();
-//        glPopMatrix();
-
-        glScaled(0.1,0.1,0.9);
-        glutWireTorus(0.5,0.5,50,50);
-    glPopMatrix();
-
-    ///Left
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(0,0,-1.2);
-        glRotated(50,0,1,0);
-        glScaled(0.7,0.1,3);
-        glRotated(-25,0,1,0);
-        glutWireCube(1);
-    glPopMatrix();
-
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(-0.3,-0.15,-1.5);
-        glRotated(90,0,1,0);
-        glScaled(0.1,0.1,0.9);
-        glutWireTorus(0.5,0.5,50,50);
-    glPopMatrix();
-
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(0.2,-0.15,-0.9);
-        glRotated(90,0,1,0);
-        glScaled(0.1,0.1,0.9);
-        glutWireTorus(0.5,0.5,50,50);
-    glPopMatrix();
+    /* glColor3d(0,0,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(1.7,0.1,0); */
+    /*     glScaled(1.5,0.7,0.8); */
+    /*     glRotated(40,0,1,0); */
+    /*     glutWireSphere(0.45,30,30); */
+    /* glPopMatrix(); */
 
 
-    glPushMatrix();
-        glTranslated(-2.8,0,0);
-        glScaled(0.8,0.5,0.3);
+    /* ///Right */
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(0,0,1.2); */
+    /*     glRotated(-50,0,1,0); */
+    /*     glScaled(0.7,0.1,3); */
+    /*     glRotated(25,0,1,0); */
+    /*     glutWireCube(1); */
+    /* glPopMatrix(); */
 
-        ///Right
-        glColor3d(0.8,1,0);
-        glPushMatrix();
-            glTranslated(0.4,0,1.5);
-            glRotated(-30,0,1,0);
-            glScaled(0.7,0.1,3);
-            glRotated(10,0,1,0);
-            glutWireCube(1);
-        glPopMatrix();
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(-0.3,-0.15,1.5); */
+    /*     glRotated(90,0,1,0); */
+    /*     glScaled(0.1,0.1,0.9); */
+    /*     glutWireTorus(0.5,0.5,50,50); */
+    /* glPopMatrix(); */
 
-        ///left
-        glColor3d(0.8,1,0);
-        glPushMatrix();
-            glTranslated(0.4,0,-1.5);
-            glRotated(30,0,1,0);
-            glScaled(0.7,0.1,3);
-            glRotated(-10,0,1,0);
-            glutWireCube(1);
-        glPopMatrix();
-    glPopMatrix();
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(0.2,-0.15,0.9); */
+    /*     glRotated(90,0,1,0); */
 
-    /// Pesoner Uporer pakha
-    glColor3d(0.8,1,0);
-    glPushMatrix();
-        glTranslated(-2.7,0.5,0);
-        glRotated(45,0,0,1);
-        glScaled(0.8,2,0.1);
-        glRotated(-20,0,0,1);
-        glutWireCube(0.5);
-    glPopMatrix();
+/* //        /// FAN */
+/* //        glPushMatrix(); */
+/* //            glTranslated(0,0,0.5); */
+/* //            //glRotated(10*a,0,0,1); */
+/* //            glScaled(0.1,0.1,0.1); */
+/* //            fan(); */
+/* //        glPopMatrix(); */
 
-    glColor3d(0.8,1,0);
-        glPushMatrix();
-        glTranslated(-2.95,0.85,0);
-        glRotated(90,0,1,0);
-        glScaled(0.05,0.05,0.6);
-        glutWireTorus(0.5,0.5,50,50);
-    glPopMatrix();
+    /*     glScaled(0.1,0.1,0.9); */
+    /*     glutWireTorus(0.5,0.5,50,50); */
+    /* glPopMatrix(); */
+
+    /* ///Left */
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(0,0,-1.2); */
+    /*     glRotated(50,0,1,0); */
+    /*     glScaled(0.7,0.1,3); */
+    /*     glRotated(-25,0,1,0); */
+    /*     glutWireCube(1); */
+    /* glPopMatrix(); */
+
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(-0.3,-0.15,-1.5); */
+    /*     glRotated(90,0,1,0); */
+    /*     glScaled(0.1,0.1,0.9); */
+    /*     glutWireTorus(0.5,0.5,50,50); */
+    /* glPopMatrix(); */
+
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(0.2,-0.15,-0.9); */
+    /*     glRotated(90,0,1,0); */
+    /*     glScaled(0.1,0.1,0.9); */
+    /*     glutWireTorus(0.5,0.5,50,50); */
+    /* glPopMatrix(); */
 
 
-    ///FANS
+    /* glPushMatrix(); */
+    /*     glTranslated(-2.8,0,0); */
+    /*     glScaled(0.8,0.5,0.3); */
 
-    glPushMatrix();
-        glTranslated(3,0,0);
-        glRotated(10*a,1,0,0);
-        //glRotated(0,1,0,0);
-        fan();
-    glPopMatrix();
+    /*     ///Right */
+    /*     glColor3d(0.8,1,0); */
+    /*     glPushMatrix(); */
+    /*         glTranslated(0.4,0,1.5); */
+    /*         glRotated(-30,0,1,0); */
+    /*         glScaled(0.7,0.1,3); */
+    /*         glRotated(10,0,1,0); */
+    /*         glutWireCube(1); */
+    /*     glPopMatrix(); */
+
+    /*     ///left */
+    /*     glColor3d(0.8,1,0); */
+    /*     glPushMatrix(); */
+    /*         glTranslated(0.4,0,-1.5); */
+    /*         glRotated(30,0,1,0); */
+    /*         glScaled(0.7,0.1,3); */
+    /*         glRotated(-10,0,1,0); */
+    /*         glutWireCube(1); */
+    /*     glPopMatrix(); */
+    /* glPopMatrix(); */
+
+    /* /// Pesoner Uporer pakha */
+    /* glColor3d(0.8,1,0); */
+    /* glPushMatrix(); */
+    /*     glTranslated(-2.7,0.5,0); */
+    /*     glRotated(45,0,0,1); */
+    /*     glScaled(0.8,2,0.1); */
+    /*     glRotated(-20,0,0,1); */
+    /*     glutWireCube(0.5); */
+    /* glPopMatrix(); */
+
+    /* glColor3d(0.8,1,0); */
+    /*     glPushMatrix(); */
+    /*     glTranslated(-2.95,0.85,0); */
+    /*     glRotated(90,0,1,0); */
+    /*     glScaled(0.05,0.05,0.6); */
+    /*     glutWireTorus(0.5,0.5,50,50); */
+    /* glPopMatrix(); */
+
+
+    /* ///FANS */
+
+    /* glPushMatrix(); */
+    /*     glTranslated(3,0,0); */
+    /*     glRotated(10*a,1,0,0); */
+    /*     //glRotated(0,1,0,0); */
+    /*     fan(); */
+    /* glPopMatrix(); */
 }
 
 void drawStrokeText(char* str,int x,int y,int z) {
@@ -466,6 +508,7 @@ int main(int argc, char *argv[])
 
     glutReshapeFunc(resize);
     glutDisplayFunc(display);
+    loadObj("ww1.obj");
     glutKeyboardFunc(key);
     //glutMouseFunc(mouse);
     glutIdleFunc(idle);

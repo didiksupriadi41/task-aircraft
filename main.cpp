@@ -101,14 +101,6 @@ void drawStrokeText(char* str,int x,int y,int z) {
 	  glPopMatrix();
 }
 
-//void WriteText(float x, float y, void *font, const unsigned char* Text)
-//{
-//    char *c;
-//    glColor3f(1.0f, 1.0f, 1.0f);
-//    glRasterPos3f(0, 0, 0);
-//    glutBitmapString(font, Text);
-//}
-
 static void display(void) {
     const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
     const double a = t*90.0;

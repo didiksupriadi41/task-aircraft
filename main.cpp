@@ -25,6 +25,7 @@
 // globals
 
 GLuint object;
+static int zoomDefault = 40;
 
 static float xRotation = 1;
 static float yRotation = 1;
@@ -211,7 +212,7 @@ int main(int argc, char *argv[])
 
     glutReshapeFunc(resize);
     glutDisplayFunc(display);
-    //loadObj("ww1.obj");
+    loadObj("ww1.obj");
     glutKeyboardFunc(key);
     glutIdleFunc(idle);
     glutMotionFunc(motion);

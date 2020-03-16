@@ -22,7 +22,7 @@
 
 static int slices = 1;
 static int slices2 = 1;
-static int stacks = 5;
+static int stacks = 10;
 static int x = 30;
 int oldX = 0;
 int oldY = 0;
@@ -183,21 +183,21 @@ void plane2(){
 void fan(){
     glColor3d(0.5,1,0);
     glPushMatrix();
-        glScaled(1,1,0.7);
-        glutSolidSphere(0.2,7,7);
+        glScaled(1,1,1);
+        glutSolidSphere(0.05,7,7);
     glPopMatrix();
 
     glColor3d(0.5,1,0);
     glPushMatrix();
-        glScaled(0.5,2.5,0.05);
-        glutSolidSphere(1,7,7);
+        glScaled(0.05,0.7,0.05);
+        glutSolidSphere(1,30,30);
     glPopMatrix();
 
     glColor3d(0.5,1,0);
     glPushMatrix();
         glRotated(90,1,0,0);
-        glScaled(0.5,2.5,0.05);
-        glutSolidSphere(1,7,7);
+        glScaled(0.05,0.7,0.05);
+        glutSolidSphere(1,30,30);
     glPopMatrix();
 
 }
@@ -333,7 +333,7 @@ void plane() {
     ///FANS
 
     glPushMatrix();
-        glTranslated(0,0,0);
+        glTranslated(3,0,0);
         glRotated(10*a,1,0,0);
         //glRotated(0,1,0,0);
         fan();

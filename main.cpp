@@ -27,7 +27,7 @@ GLuint object;
 
 static int slices = 1;
 static int slices2 = 1;
-static int stacks = 10;
+static int stacks = 40;
 static int x = 30;
 int oldX = 0;
 int oldY = 0;
@@ -223,7 +223,7 @@ void loadObj(char *fname)
   glNewList(object, GL_COMPILE);
   {
     glPushMatrix();
-    glBegin(GL_POLYGON);
+    glBegin(GL_POINTS);
     while(!(feof(fp))) {
       read=fscanf(fp,"%c %f %f %f",&ch,&x,&y,&z);
       if(read==4&&ch=='v') {
@@ -240,7 +240,7 @@ void loadObj(char *fname)
 
 void plane() {
 
-    glColor3f(1.0,0.23,0.27);
+    glColor3f(0.43,0.45,0.44);
     glCallList(object);
   
     /* const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0; */
@@ -397,7 +397,7 @@ static void display(void) {
     const double a = t*90.0;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glColor3d(1,0,0);
+    glColor3f(1,0,0);
 
     glLoadIdentity();
 

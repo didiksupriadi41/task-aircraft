@@ -229,9 +229,6 @@ void loadObj(char *fname)
       if(read==4&&ch=='v') {
         glVertex3f(x,y,z);
       }
-      if(read==4&&ch=='n') {
-        glNormal3f(x,y,z);
-      }
     }
     glEnd();
   }

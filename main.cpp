@@ -426,7 +426,7 @@ static void key(unsigned char key, int x, int y) {
         case 'r':
             slices = 1;
             slices2 = 1;
-            stacks = 1;
+            stacks = 40;
             break;
         case 'q':
             exit(0);

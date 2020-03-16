@@ -24,6 +24,7 @@
 // globals
 
 GLuint object;
+static int zoomDefault = 40;
 
 static int slices = 1;
 static int slices2 = 1;
@@ -426,7 +427,7 @@ static void key(unsigned char key, int x, int y) {
         case 'r':
             slices = 1;
             slices2 = 1;
-            stacks = 40;
+            stacks = zoomDefault;
             break;
         case 'q':
             exit(0);

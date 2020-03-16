@@ -8,7 +8,7 @@
  *
  * Spinning wireframe and smooth shaded shapes are
  * displayed until the ESC or q key is pressed.  The
- * number of geometry stacks and slices can be adjusted
+ * number of geometry zoom and xRotation can be adjusted
  * using the + and - keys.
  */
 
@@ -16,23 +16,26 @@
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
+#include <GL/freeglut.h>
 #endif
 
 #include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
-
-// globals
+#include <iostream>
 
 GLuint object;
-static int zoomDefault = 40;
 
-static int slices = 1;
-static int slices2 = 1;
-static int stacks = 40;
+static float xRotation = 1;
+static float yRotation = 1;
+static float zRotation = 1;
+static int zoom = 40;
 static int x = 30;
 int oldX = 0;
 int oldY = 0;
-
+float angle = 0;
+float xz = 1;
+float xy = 0;
 /* GLUT callback Handlers */
 
 static void resize(int width, int height) {
@@ -383,7 +386,7 @@ void plane() {
 void drawStrokeText(char* str,int x,int y,int z) {
 	  char *c;
 	  glPushMatrix();
-	  glTranslatef(x, y+8,z);
+	//   glTranslatef(x, y+8,z);
 	  glScalef(10,10,10);
 
 	  for (c=str; *c != '\0'; c++)
@@ -391,6 +394,14 @@ void drawStrokeText(char* str,int x,int y,int z) {
     		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
 	  }
 	  glPopMatrix();
+}
+
+void WriteText(float x, float y, void *font, const unsigned char* Text)
+{
+    char *c;
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRasterPos3f(0, 0, 0);
+    glutBitmapString(font, Text);
 }
 
 static void display(void) {
@@ -403,71 +414,80 @@ static void display(void) {
     glLoadIdentity();
 
     gluLookAt(	0.0, 4.5, 10.0,
-                0, 4, 0,
-                0, 1.0f, 0.0f);
+                0 + cos(xz), 4, 0 + sin(xz),
+                0 + cos(xy), 1.0f, 0.0f + sin(xy));
 
     glPushMatrix();
-        glTranslated(0,0,-80);
-        glRotated(slices,1,0,0);
-        glRotated(slices2,0,1,0);
-        glRotated(30,1,0,0);
-        glScaled(stacks,stacks,stacks);
-        plane();
+    glTranslated(0,0,-80);
+    glRotated(xRotation,1,0,0);
+    glRotated(yRotation,0,1,0);
+    glRotated(zRotation,0,0,1);
+    glRotated(30,1,0,0);
+    glScaled(zoom,zoom,zoom);
+    plane();
     glPopMatrix();
 
+    char* helpText = "Zoom in and out: + and -\n Rotation x y z: a s d\n Mengitari model: c v z x \nReset: r\nQuit: q\n";
     drawStrokeText("UP: W, DOWN: S, LEFT: A, RIGHT: D, MAIN MENU: M",0,1,-5);
-
+    // WriteText(4, 0, GLUT_BITMAP_HELVETICA_18, helpText);
     drawStrokeText("Press G to Start",0,10,-10);
     glutSwapBuffers();
 }
+
 
 static void key(unsigned char key, int x, int y) {
     switch (key)
     {
         case 'r':
-            slices = 1;
-            slices2 = 1;
-            stacks = zoomDefault;
+            xRotation = 1;
+            yRotation = 1;
+            zoom = 1;
             break;
         case 'q':
             exit(0);
             break;
 
         case '+':
-            slices++;
-            stacks++;
+            zoom++;
             break;
 
         case '-':
-            if (slices > 1) {
-                slices--;
-                stacks--;
+            if (xRotation > 1) {
+                zoom--;
             }
             break;
+        case 'a':
+            xRotation++;
+            break;
+        case 's':
+            yRotation++;
+            break;
+        case 'd':
+            zRotation++;
+            break;
+        case 'z':
+            // calculateAngle(0.01);
+            xz += 0.01;
+                    break;
+        case 'x':
+            xz -= 0.01;
+            break;
+        case 'c':
+            xy += 0.01;
+            // if (xy >= M_PI) xy=;
+            printf("%f\n", cos(xy));
+            printf("{%f 1.0 %f]\n", 0+cos(xy), 0+sin(xy));
+            break;
+        case 'v':
+            xy -= 0.01;
+            break;
 
+        
     }
 
     glutPostRedisplay();
 }
 
-static void mouse(int button, int state, int x, int y) {
-  // If button1 pressed, mark this state so we know in motion function.
-  switch (button) {
-    case GLUT_LEFT_BUTTON:
-        {
-            slices+=0.4;
-            stacks+=0.4;
-        }
-        break;
-    case GLUT_RIGHT_BUTTON:
-        {
-        }
-        slices-=0.4;
-        stacks-=0.4;
-        break;
-  }
-
-}
 
 static void idle(void)
 {
@@ -475,25 +495,11 @@ static void idle(void)
 }
 
 void motion(int x, int y) {
-    slices +=(y-oldY);
+    xRotation +=(y-oldY);
     oldY = y;
-    slices2 +=(x-oldX);
+    yRotation +=(x-oldX);
     oldX = x;
-
 }
-
-
-const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
-
-const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
-const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
-const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
-const GLfloat high_shininess[] = { 100.0f };
-
-/* Program entry point */
 
 int main(int argc, char *argv[])
 {
@@ -508,32 +514,10 @@ int main(int argc, char *argv[])
     glutDisplayFunc(display);
     loadObj("ww1.obj");
     glutKeyboardFunc(key);
-    //glutMouseFunc(mouse);
     glutIdleFunc(idle);
     glutMotionFunc(motion);
-
     glClearColor(1,1,1,1);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-    glMaterialfv(GL_FRONT, GL_AMBIENT,   mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE,   mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-
     glutMainLoop();
 
     return EXIT_SUCCESS;
